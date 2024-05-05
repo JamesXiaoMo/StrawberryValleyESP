@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Relay.h>
 #include <Wi-Fi.h>
 #include <Ticker.h>
 
@@ -11,6 +12,7 @@ void setup(){
   WiFiCheckTimeer.start();
   TcpSocketSetup();
   SocketCheckTimer.start();
+  addRelay(0, 38);
 }
 
 void loop(){
