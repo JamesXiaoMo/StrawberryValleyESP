@@ -1,5 +1,7 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
+#include <Relay.h>
+
 
 //初始化WiFiClient
 WiFiClient client;
@@ -66,7 +68,7 @@ void HeartBeat(){
 
 //TCP接收数据
 void RecvData(){
-    String receiveddata = "";
+    String receiveddata;
     if (client.available()){
         while (true)
         {
@@ -77,8 +79,10 @@ void RecvData(){
             receiveddata += c;
         }
         Serial.println(receiveddata);
-        if(receiveddata == "HB"){
-            HeartBeat();
+        if (receiveddata == "15"){
+            SwitchRelay(0, 1);
+            delay(2000);
+            SwitchRelay(0, 0);
         }
     }
 }
