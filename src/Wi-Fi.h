@@ -2,7 +2,7 @@
 #include <WiFiClient.h>
 #include <Relay.h>
 #include <PubSubClient.h>
-
+#include <string.h>
 
 //初始化WiFiClient
 WiFiClient client;
@@ -114,17 +114,25 @@ void mqtt_reconnect() {
   }
 }
 
+void mqtt_command_handle(String command){
+    int separator = command.indexOf(":");
+    String relay_index = command.substring(0, separator);
+    String relay_state = command.substring(separator + 1, command.length());
+    SwitchRelay(relay_index.toInt(), relay_state.toInt());
+}
+
 //MQTT回调函数
 void callback(char* topic, byte* message, unsigned int length) {
   Serial.print("Message arrived on topic: ");
   Serial.print(topic);
-  Serial.print(". Message: ");
+  Serial.print(" => Message: ");
   String messageTemp;
   
   for (int i = 0; i < length; i++) {
     messageTemp += (char)message[i];
   }
   Serial.println(messageTemp);
+  mqtt_command_handle(messageTemp);
 }
 
 //MQTT初始化

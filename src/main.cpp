@@ -32,7 +32,7 @@ void loop(){
     mqtt_reconnect();
   }
   mqtt_client.loop();
-  
+
   // 发布消息
   //mqtt_client.publish("StrawberryValley", "Hello from ESP32");
   delay(100); 
