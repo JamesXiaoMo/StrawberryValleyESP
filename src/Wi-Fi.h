@@ -1,16 +1,20 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <Relay.h>
+#include <PubSubClient.h>
 
 
 //初始化WiFiClient
 WiFiClient client;
+PubSubClient mqtt_client(client);
 
 //设置网络参数
 const char* SSID = "Jameswu_2.4G";
 const char* PWD = "20030521";
 const char* TCPServerAddr = "192.168.0.117";
 int ServerPort = 1105;
+const char* mqtt_server = "192.168.0.115";
+const int mqtt_port = 1883;
 
 //WiFi初始化，连接设定的Wi-Fi
 void WiFiSetup(){
@@ -85,4 +89,46 @@ void RecvData(){
             SwitchRelay(0, 0);
         }
     }
+}
+
+//MQTT重连服务器
+void mqtt_reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // Create a random client ID
+    String clientId = "ESP32Client-";
+    clientId += String(random(0xffff), HEX);
+    // Attempt to connect
+    if (mqtt_client.connect(clientId.c_str())) {
+      Serial.println("connected");
+      // 订阅主题
+      mqtt_client.subscribe("StrawberryValley");
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(mqtt_client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
+
+//MQTT回调函数
+void callback(char* topic, byte* message, unsigned int length) {
+  Serial.print("Message arrived on topic: ");
+  Serial.print(topic);
+  Serial.print(". Message: ");
+  String messageTemp;
+  
+  for (int i = 0; i < length; i++) {
+    messageTemp += (char)message[i];
+  }
+  Serial.println(messageTemp);
+}
+
+//MQTT初始化
+void mqtt_setup(){
+    mqtt_client.setServer(mqtt_server, mqtt_port);
+    mqtt_client.setCallback(callback);
 }
