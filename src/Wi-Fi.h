@@ -13,8 +13,9 @@ const char* SSID = "Jameswu_2.4G";
 const char* PWD = "20030521";
 const char* TCPServerAddr = "192.168.0.117";
 int ServerPort = 1105;
-const char* mqtt_server = "192.168.0.115";
+const char* mqtt_server = "192.168.0.102";
 const int mqtt_port = 1883;
+const char* mqtt_id= "ESP001";
 
 //WiFi初始化，连接设定的Wi-Fi
 void WiFiSetup(){
@@ -116,9 +117,12 @@ void mqtt_reconnect() {
 
 void mqtt_command_handle(String command){
     int separator = command.indexOf(":");
-    String relay_index = command.substring(0, separator);
-    String relay_state = command.substring(separator + 1, command.length());
-    SwitchRelay(relay_index.toInt(), relay_state.toInt());
+    if(separator != -1){
+        Serial.println(separator);
+        String relay_index = command.substring(0, separator);
+        String relay_state = command.substring(separator + 1, command.length());
+        SwitchRelay(relay_index.toInt(), relay_state.toInt());
+    }
 }
 
 //MQTT回调函数
