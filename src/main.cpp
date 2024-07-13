@@ -20,9 +20,6 @@ void setup(){
   mqtt_setup();
   
   WiFiCheckTimeer.start();
-  //OTA_request(current_version);
-  //TcpSocketSetup();
-  //SocketCheckTimer.start();
   OTACheckTimer.start();
   DHTUpload.start();
   addRelay(0, 15);
@@ -38,8 +35,4 @@ void loop(){
     mqtt_reconnect();
   }
   mqtt_client.loop();
-  //mqtt_client.publish("StrawberryValley", DHT22_value(dht_sensor)); 
-  // 发布消息
-  //SocketCheckTimer.update();
-  //RecvData();
 }
